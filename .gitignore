@@ -9,6 +9,32 @@
 # Dev Defined Files
 appsettings.Development.json
 
+#Angular
+# Ignore Angular specific files
+# Node modules (dependencies)
+node_modules/
+
+# Build & Output files
+dist/
+coverage/
+
+# Temporary or Editor-specific files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Angular-specific files
+.angular/
+.angular-cache/
+
+# Logs & IDE-specific files
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Environment configuration files (if they contain secrets)
+src/environments/environment*.ts
+
 
 # User-specific files
 *.rsuser
