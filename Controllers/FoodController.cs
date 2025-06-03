@@ -15,14 +15,13 @@ namespace foodsnap_ai.Controllers
         [HttpPost("upload-image")]
         public async Task<IActionResult> UploadImage(IFormFile imageFile)
         {
-           if(imageFile == null ||  imageFile.Length == 0)
-           {
+            if(imageFile == null ||  imageFile.Length == 0)
+            {
                 return BadRequest("File not found");
-           }
-
-           var filePath = Path.Combine("ImageUploads", imageFile.FileName);
+            }
             try
             {
+                var filePath = Path.Combine("ImageUploads", imageFile.FileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await imageFile.CopyToAsync(stream);
