@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
+
 
 namespace foodsnap_ai.Controllers
 {
@@ -26,8 +27,24 @@ namespace foodsnap_ai.Controllers
                 {
                     await imageFile.CopyToAsync(stream);
                 }
+                string apiUrl = "http://127.0.0.1:5000/detect-image";
+                using (var client = new HttpClient())
+                {
+                    using(var form = new MultipartFormDataContent())
+                    {
+                        byte[] imageBytes = System.IO.File.ReadAllBytes(filePath);
+                        var imageContent = new ByteArrayContent(imageBytes);
+                        imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
 
-                return Ok("Image uploaded successfully");
+                        form.Add(imageContent, "image", Path.GetFileName(filePath));
+
+                        HttpResponseMessage response = await client.PostAsync(apiUrl, form);
+                        response.EnsureSuccessStatusCode();
+                        string result = await response.Content.ReadAsStringAsync();
+                        return Ok(result);
+                         
+                    }
+                }
             }
             catch (Exception ex)
             {
