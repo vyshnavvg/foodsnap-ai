@@ -3,6 +3,8 @@ from keras.models import load_model
 import numpy as np
 from PIL import Image
 
+# To Run  flask --app .\aiModelApp.py run
+
 app = Flask(__name__)
 model = load_model("food_classifier_model.h5")
 
@@ -28,9 +30,9 @@ def detectImage():
     prediction_dict = {food_classes[i]: round(float(prediction[0][i])* 100, 2) for i in range(len(food_classes))}
 
     return jsonify({
-        "prediction: ": predicted_class,
+        "prediction": predicted_class,
         "confidence": round(confidence_score, 2), #rounded to 2 decimal places
-        "full_prediction": prediction_dict #show all
+        "fullPrediction": prediction_dict #show all
         })
 
 @app.route("/")

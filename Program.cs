@@ -1,3 +1,7 @@
+using Core.Interfaces;
+using Infrastructure.Helper;
+using Infrastructure.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,6 +15,10 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
 {
     options.MultipartBodyLengthLimit = 10485760; //10MB limit
 });
+
+// Register Services
+builder.Services.AddSingleton<DbConnectionHelper>();
+builder.Services.AddScoped<IFoodRepository, FoodRepository>();
 
 var app = builder.Build();
 

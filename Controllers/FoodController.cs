@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Core.DTO;
+using Core.Entities;
+using Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 
 namespace foodsnap_ai.Controllers
@@ -8,6 +12,14 @@ namespace foodsnap_ai.Controllers
     [ApiController]
     public class FoodController : ControllerBase
     {
+        private readonly IFoodRepository _foodRepository;
+        private readonly IConfiguration _configuration;
+        public FoodController(IFoodRepository foodRepository, IConfiguration configuration)
+        {
+            _foodRepository = foodRepository;
+            _configuration = configuration;
+        }
+
         /// <summary>
         /// This Endpoint is used to upload pictures of food items for calorie processsing
         /// </summary>
@@ -27,7 +39,8 @@ namespace foodsnap_ai.Controllers
                 {
                     await imageFile.CopyToAsync(stream);
                 }
-                string apiUrl = "http://127.0.0.1:5000/detect-image";
+
+                string apiUrl = _configuration.GetConnectionString("ApiModelUrl");
                 using (var client = new HttpClient())
                 {
                     using(var form = new MultipartFormDataContent())
@@ -39,9 +52,25 @@ namespace foodsnap_ai.Controllers
                         form.Add(imageContent, "image", Path.GetFileName(filePath));
 
                         HttpResponseMessage response = await client.PostAsync(apiUrl, form);
-                        response.EnsureSuccessStatusCode();
-                        string result = await response.Content.ReadAsStringAsync();
-                        return Ok(result);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            return StatusCode((int)response.StatusCode, new { Message = "Error calling AI model", Status = response.StatusCode });
+                        }
+
+                        FoodPrediction foodPrediction = await response.Content.ReadFromJsonAsync<FoodPrediction>();
+
+                        var foodDetails = await _foodRepository.GetFoodDetails(foodPrediction.Prediction);
+
+                        FoodPredictionDTO foodPredictionDTO = new FoodPredictionDTO
+                        {
+                            FoodName = foodPrediction.Prediction,
+                            ConfidenceScore = foodPrediction.Confidence,
+                            Calories = foodDetails.Calories,
+                            FullPrediction = foodPrediction.FullPrediction
+                        };
+
+                        return Ok(foodPredictionDTO);
                          
                     }
                 }
@@ -52,10 +81,19 @@ namespace foodsnap_ai.Controllers
             }
         }
 
-        [HttpGet("GetCalories")]
-        public async Task<IActionResult> GetCalories()
+        [HttpPost("GetCalories")]
+        public async Task<IActionResult> GetCalories(string foodName)
         {
-            return Ok("Calories retrieved successfully.");
+            var foodDetails = await _foodRepository.GetFoodDetails(foodName);
+
+            var FoodDetailsDTO = new FoodInfoDTO
+            {
+                Name = foodDetails.Name,
+                Calories = foodDetails.Calories,
+                Weight = foodDetails.Weight
+            };
+
+            return Ok(FoodDetailsDTO);
         }
     }
 }
