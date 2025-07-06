@@ -6,10 +6,11 @@ from keras.src.legacy.preprocessing.image import ImageDataGenerator
 from keras.layers import GlobalAveragePooling2D
 import matplotlib.pyplot as plt
 
-
+ # Food Snap AI Model
+ 
 model = Sequential([
 
-    # Conv2D extracts features like edges, texttures, colors patterns
+    # Conv2D extracts features like edges, texttures, colors of fruits and its patterns
     Conv2D(32, (3,3), activation="relu", input_shape=(244,244,3)),
     # Pooling layer used to reduce dimenstions of feature map from previous layers before passing to next layer, Make computation faster while keeping relevant info
     MaxPooling2D(pool_size=(2,2)),
@@ -81,4 +82,4 @@ plt.legend()
 plt.show()
 
 # Save model
-model.save("food_classifier_model.h5")
+model.save("food_classifier_model_v2.h5")

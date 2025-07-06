@@ -1,8 +1,27 @@
-<h1>FoodSnap - AI</h1>
-<p>Welcome to FoodSnap, your AI-powered food recognition app!</p>
-<p>Estimate the calories and nutrients of your meal</p>
+<div class="content">
+    <p class="heading">FoodSnap - AI</p>
+    <p class="about">Welcome to FoodSnap, your AI-powered food recognition app! <br>
+                    Estimate the calories and nutrients in your meal
+    </p>
+    <p class="about"></p>
 
+    @if(fileInfo)
+    {
+    <h2>The Uploaded food is {{ fileInfo.foodName }}</h2>
+    <h4>Confidence {{fileInfo.confidenceScore}}</h4>
+    <h3>Calories: {{fileInfo.calories}}</h3>
+    } 
+    @else {
+        <h2>Please Upload Image</h2>
+    }
 
-<input type="file" accept="image/*"/>
-<button (click)="uploadImage()">Upload Image</button>
+    @if (imagePreview) {
+        <img [src]=imagePreview class="imagePreview">
+    }
 
+    <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+    <label for="weight">Weight: </label>
+    <input class="weight" type="number" min="1" id="weight" name="weight" placeholder="Enter weight in grams" (change)="onWeightChange($event)">
+    <button type="submit" style="display:  block; margin: 20px auto;" (click)="uploadImage()">Upload</button>
+
+</div>

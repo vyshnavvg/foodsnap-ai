@@ -1,0 +1,26 @@
+.content {
+    text-align: center;
+}
+
+.imagePreview {
+    max-width: 300px;
+    display: block;
+    align-content: center;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+.heading {
+    font-weight: bold;
+    font-size: xx-large;
+    color: white;
+}
+
+.about {
+    line-height: 20px;
+    margin-bottom: 50px;
+}
+
+.weight{
+    max-width: 130px;
+}

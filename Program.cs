@@ -16,6 +16,15 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
     options.MultipartBodyLengthLimit = 10485760; //10MB limit
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontEnd",
+        policy => policy
+            .WithOrigins("http://localhost:4200") //Replace with Angular url
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 // Register Services
 builder.Services.AddSingleton<DbConnectionHelper>();
 builder.Services.AddScoped<IFoodRepository, FoodRepository>();
@@ -30,6 +39,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontEnd");
 
 app.UseAuthorization();
 

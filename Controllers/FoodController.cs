@@ -1,4 +1,5 @@
-﻿using Core.DTO;
+﻿#nullable enable
+using Core.DTO;
 using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ namespace foodsnap_ai.Controllers
         /// <param name="imageFile">Image File</param>
         /// <returns>Success/Failure response</returns>
         [HttpPost("upload-image")]
-        public async Task<IActionResult> UploadImage(IFormFile imageFile)
+        public async Task<IActionResult> UploadImage(IFormFile imageFile, [FromQuery]int? weight)
         {
             if(imageFile == null ||  imageFile.Length == 0)
             {
@@ -62,6 +63,12 @@ namespace foodsnap_ai.Controllers
 
                         var foodDetails = await _foodRepository.GetFoodDetails(foodPrediction.Prediction);
 
+                        if( weight != null && weight > 0)
+                        {
+                            decimal foodCalorie = CalculateCalories((int)weight, foodDetails.Calories);
+                            foodDetails.Calories = foodCalorie;
+                        }
+
                         FoodPredictionDTO foodPredictionDTO = new FoodPredictionDTO
                         {
                             FoodName = foodPrediction.Prediction,
@@ -94,6 +101,12 @@ namespace foodsnap_ai.Controllers
             };
 
             return Ok(FoodDetailsDTO);
+        }
+
+        private decimal CalculateCalories(int weight, decimal foodCalorie)
+        {
+            decimal calorieForOnegram = foodCalorie / 100;
+            return weight * calorieForOnegram;
         }
     }
 }

@@ -6,7 +6,7 @@ from PIL import Image
 # To Run  flask --app .\aiModelApp.py run
 
 app = Flask(__name__)
-model = load_model("food_classifier_model.h5")
+model = load_model("food_classifier_model_v2.h5")
 
 def preprocess_image(image):
     image = Image.open(image).resize((224,224)) #Resize to match CNN input
@@ -34,10 +34,6 @@ def detectImage():
         "confidence": round(confidence_score, 2), #rounded to 2 decimal places
         "fullPrediction": prediction_dict #show all
         })
-
-@app.route("/")
-def hello_world():
-    return "<h1>Hello, World from Vyshnav</h1>"
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
