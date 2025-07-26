@@ -9,4 +9,4 @@ Tech stack used:
 Backend: .Net Core Web Api
 FrontEnd: Angular
 Db: Sql
-Ai
+
